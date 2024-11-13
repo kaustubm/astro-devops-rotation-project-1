@@ -21,7 +21,6 @@ web_alb_dns = "three-tier-app-web-alb-850893357.ap-southeast-1.elb.amazonaws.com
 1. First, create the provider configuration:
 
 ```hcl
-# File: provider.tf
 
 # Specify required providers and their versions
 terraform {
@@ -48,7 +47,6 @@ This sets up:
 2. Create the variables file:
 
 ```hcl
-# File: variables.tf
 
 # Environment name variable
 variable "environment" {
@@ -128,7 +126,6 @@ This defines:
 1. Create the VPC:
 
 ```hcl
-# File: networking.tf
 
 # Create VPC
 resource "aws_vpc" "main" {
@@ -232,7 +229,7 @@ resource "aws_eip" "nat" {
 # NAT Gateway for private subnets
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id  # Place in first public subnet
+  subnet_id     = aws_subnet.public[0].id  # placing this in the 1st subnet
 
   tags = {
     Name        = "${var.app_name}-nat"
@@ -321,7 +318,6 @@ This:
 1. Create Security Groups:
 
 ```hcl
-# File: security.tf
 
 # Web Tier Security Group
 resource "aws_security_group" "web" {
@@ -338,7 +334,7 @@ resource "aws_security_group" "web" {
     description = "Allow HTTPS inbound"
   }
 
-  # Allow HTTP from anywhere (consider removing in production)
+  # Allow HTTP from anywhere, will remove this in prod
   ingress {
     from_port   = 80
     to_port     = 80
@@ -446,7 +442,6 @@ resource "aws_security_group" "db" {
 1. Create IAM Roles and Policies:
 
 ```hcl
-# File: iam.tf
 
 # IAM Role for EC2 instances in Application Tier
 resource "aws_iam_role" "app_role" {
@@ -477,7 +472,7 @@ resource "aws_iam_instance_profile" "app_profile" {
   role = aws_iam_role.app_role.name
 }
 
-# Attach needed AWS managed policies
+# AWS managed policies
 resource "aws_iam_role_policy_attachment" "app_policy" {
   for_each = toset([
     "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess",
@@ -495,7 +490,6 @@ resource "aws_iam_role_policy_attachment" "app_policy" {
 1. Create Launch Templates:
 
 ```hcl
-# File: compute.tf
 
 # Launch Template for Web Tier
 resource "aws_launch_template" "web" {
@@ -640,15 +634,14 @@ resource "aws_autoscaling_group" "app" {
 
 This configuration:
 
-1. Sets up security groups with proper inbound/outbound rules for each tier
+1. Setting up security groups with proper inbound/outbound rules for each tier
 2. Creates IAM roles with necessary permissions for the application tier
-3. Configures launch templates with proper user data scripts and settings
-4. Sets up auto scaling groups with proper health checks and scaling configurations
+3. Configure launch templates with proper user data scripts and settings
+4. Set up auto scaling groups with proper health checks and scaling configurations
 
 # Step 6: Load Balancer Configuration
 
 ```hcl
-# File: loadbalancer.tf
 
 # Application Load Balancer for Web Tier
 resource "aws_lb" "web" {
@@ -799,7 +792,6 @@ resource "aws_s3_bucket_policy" "alb_logs" {
 # Step 7: Database Configuration
 
 ```hcl
-# File: database.tf
 
 # RDS Subnet Group
 resource "aws_db_subnet_group" "main" {
@@ -902,7 +894,6 @@ resource "aws_iam_role_policy_attachment" "rds_monitoring_policy" {
 # Step 8: DNS Configuration
 
 ```hcl
-# File: dns.tf
 
 # Private Hosted Zone
 resource "aws_route53_zone" "private" {
@@ -943,7 +934,6 @@ resource "aws_route53_record" "db" {
 # Step 9: Monitoring Configuration
 
 ```hcl
-# File: monitoring.tf
 
 # CloudWatch Log Groups
 resource "aws_cloudwatch_log_group" "app_logs" {
@@ -1019,18 +1009,17 @@ resource "aws_sns_topic" "alerts" {
   }
 }
 
-# Optional: SNS Topic Subscription (uncomment and modify as needed)
+# Didnt implement yet: SNS Topic Subscription
 # resource "aws_sns_topic_subscription" "alerts_email" {
 #   topic_arn = aws_sns_topic.alerts.arn
 #   protocol  = "email"
-#   endpoint  = "your-email@example.com"
+#   endpoint  = "kaustub_vs-madhu-sudhana-rao@astro.com.my"
 # }
 ```
 
 # Step 10: Outputs Configuration
 
 ```hcl
-# File: outputs.tf
 
 # VPC Outputs
 output "vpc_id" {
@@ -1119,7 +1108,6 @@ output "app_asg_name" {
 1. Auto Scaling Policies:
 
 ```hcl
-# File: autoscaling.tf
 
 # Web Tier Scaling Policies
 resource "aws_autoscaling_policy" "web_scale_up" {
@@ -1191,158 +1179,7 @@ resource "aws_cloudwatch_metric_alarm" "web_cpu_low" {
 }
 ```
 
-2. Backup Configuration:
-
-```hcl
-# File: backup.tf
-
-# AWS Backup Vault
-resource "aws_backup_vault" "main" {
-  name = "${var.app_name}-backup-vault"
-
-  tags = {
-    Name        = "${var.app_name}-backup-vault"
-    Environment = var.environment
-  }
-}
-
-# AWS Backup Plan
-resource "aws_backup_plan" "main" {
-  name = "${var.app_name}-backup-plan"
-
-  rule {
-    rule_name         = "daily_backup"
-    target_vault_name = aws_backup_vault.main.name
-    schedule          = "cron(0 1 * * ? *)"  # 1 AM daily
-
-    lifecycle {
-      delete_after = 30  # Keep backups for 30 days
-    }
-  }
-
-  rule {
-    rule_name         = "weekly_backup"
-    target_vault_name = aws_backup_vault.main.name
-    schedule          = "cron(0 1 ? * SUN *)"  # 1 AM every Sunday
-
-    lifecycle {
-      delete_after = 90  # Keep backups for 90 days
-    }
-  }
-
-  tags = {
-    Name        = "${var.app_name}-backup-plan"
-    Environment = var.environment
-  }
-}
-
-# AWS Backup Selection
-resource "aws_backup_selection" "main" {
-  name         = "${var.app_name}-backup-selection"
-  plan_id      = aws_backup_plan.main.id
-  iam_role_arn = aws_iam_role.backup_role.arn
-
-  selection_tag {
-    type  = "STRINGEQUALS"
-    key   = "Environment"
-    value = var.environment
-  }
-}
-
-# IAM Role for AWS Backup
-resource "aws_iam_role" "backup_role" {
-  name = "${var.app_name}-backup-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "backup.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "backup_policy" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
-  role       = aws_iam_role.backup_role.name
-}
-```
-
-3. SSM Parameter Store for Configuration:
-
-```hcl
-# File: ssm.tf
-
-# Store sensitive configuration in SSM Parameter Store
-resource "aws_ssm_parameter" "db_host" {
-  name  = "/${var.app_name}/${var.environment}/db/host"
-  type  = "String"
-  value = aws_db_instance.main.endpoint
-}
-
-resource "aws_ssm_parameter" "db_name" {
-  name  = "/${var.app_name}/${var.environment}/db/name"
-  type  = "String"
-  value = aws_db_instance.main.db_name
-}
-
-resource "aws_ssm_parameter" "db_user" {
-  name  = "/${var.app_name}/${var.environment}/db/user"
-  type  = "String"
-  value = var.db_username
-}
-
-resource "aws_ssm_parameter" "db_password" {
-  name  = "/${var.app_name}/${var.environment}/db/password"
-  type  = "SecureString"
-  value = var.db_password
-}
-```
-
-4. Tags Configuration:
-
-```hcl
-# File: locals.tf
-
-locals {
-  common_tags = {
-    Environment = var.environment
-    Project     = var.app_name
-    ManagedBy   = "terraform"
-    Owner       = "infrastructure-team"
-    CostCenter  = "infrastructure"
-  }
-
-  backup_tags = {
-    Backup     = "true"
-    BackupPlan = "${var.app_name}-backup-plan"
-  }
-}
-```
-
-5. Create a `versions.tf` file to specify provider versions:
-
-```hcl
-# File: versions.tf
-
-terraform {
-  required_version = ">= 1.0.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-  }
-}
-```
-
-To deploy this infrastructure:
+Infra deployment:
 
 1. Initialize Terraform:
 
@@ -1350,38 +1187,27 @@ To deploy this infrastructure:
 terraform init
 ```
 
-2. Create a `terraform.tfvars` file:
+2. Created a `terraform.tfvars` file:
 
 ```hcl
-environment  = "prod"
-app_name     = "three-tier-app"
 db_username  = "admin"
-db_password  = "your-secure-password"
+db_password  = "---"
 ```
 
-3. Validate the configuration:
+3. Validating the configuration:
 
 ```bash
 terraform validate
 ```
 
-4. Plan the deployment:
+4. Planning the deployment:
 
 ```bash
-terraform plan -out=tfplan
+terraform plan > output.txt
 ```
 
-5. Apply the configuration:
+5. Applying the configuration:
 
 ```bash
-terraform apply tfplan
+terraform apply
 ```
-
-Important Notes:
-
-1. Always review the plan before applying
-2. Keep sensitive information in `terraform.tfvars` and don't commit it to version control
-3. Consider using remote state storage and state locking
-4. Implement proper backup and disaster recovery procedures
-5. Monitor the infrastructure after deployment
-6. Set up proper alerting and notification channels
