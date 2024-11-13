@@ -1,0 +1,1298 @@
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_autoscaling_group.app will be created
+  + resource "aws_autoscaling_group" "app" {
+      + arn                       = (known after apply)
+      + availability_zones        = (known after apply)
+      + default_cooldown          = (known after apply)
+      + desired_capacity          = 2
+      + force_delete              = false
+      + force_delete_warm_pool    = false
+      + health_check_grace_period = 300
+      + health_check_type         = "ELB"
+      + id                        = (known after apply)
+      + max_size                  = 4
+      + metrics_granularity       = "1Minute"
+      + min_size                  = 1
+      + name                      = "three-tier-app-app-asg"
+      + name_prefix               = (known after apply)
+      + predicted_capacity        = (known after apply)
+      + protect_from_scale_in     = false
+      + service_linked_role_arn   = (known after apply)
+      + target_group_arns         = (known after apply)
+      + vpc_zone_identifier       = (known after apply)
+      + wait_for_capacity_timeout = "10m"
+      + warm_pool_size            = (known after apply)
+
+      + launch_template {
+          + id      = (known after apply)
+          + name    = (known after apply)
+          + version = "$Latest"
+        }
+
+      + tag {
+          + key                 = "Name"
+          + propagate_at_launch = true
+          + value               = "three-tier-app-app"
+        }
+    }
+
+  # aws_autoscaling_group.web will be created
+  + resource "aws_autoscaling_group" "web" {
+      + arn                       = (known after apply)
+      + availability_zones        = (known after apply)
+      + default_cooldown          = (known after apply)
+      + desired_capacity          = 2
+      + force_delete              = false
+      + force_delete_warm_pool    = false
+      + health_check_grace_period = 300
+      + health_check_type         = "ELB"
+      + id                        = (known after apply)
+      + max_size                  = 4
+      + metrics_granularity       = "1Minute"
+      + min_size                  = 1
+      + name                      = "three-tier-app-web-asg"
+      + name_prefix               = (known after apply)
+      + predicted_capacity        = (known after apply)
+      + protect_from_scale_in     = false
+      + service_linked_role_arn   = (known after apply)
+      + target_group_arns         = (known after apply)
+      + vpc_zone_identifier       = (known after apply)
+      + wait_for_capacity_timeout = "10m"
+      + warm_pool_size            = (known after apply)
+
+      + launch_template {
+          + id      = (known after apply)
+          + name    = (known after apply)
+          + version = "$Latest"
+        }
+
+      + tag {
+          + key                 = "Name"
+          + propagate_at_launch = true
+          + value               = "three-tier-app-web"
+        }
+    }
+
+  # aws_cloudwatch_metric_alarm.app_cpu will be created
+  + resource "aws_cloudwatch_metric_alarm" "app_cpu" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "This metric monitors EC2 CPU utilization for application tier"
+      + alarm_name                            = "three-tier-app-app-cpu-high"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanThreshold"
+      + dimensions                            = {
+          + "AutoScalingGroupName" = "three-tier-app-app-asg"
+        }
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 2
+      + id                                    = (known after apply)
+      + metric_name                           = "CPUUtilization"
+      + namespace                             = "AWS/EC2"
+      + period                                = 300
+      + statistic                             = "Average"
+      + tags                                  = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-cpu-alarm"
+        }
+      + tags_all                              = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-cpu-alarm"
+        }
+      + threshold                             = 80
+      + treat_missing_data                    = "missing"
+    }
+
+  # aws_cloudwatch_metric_alarm.web_cpu will be created
+  + resource "aws_cloudwatch_metric_alarm" "web_cpu" {
+      + actions_enabled                       = true
+      + alarm_actions                         = (known after apply)
+      + alarm_description                     = "This metric monitors EC2 CPU utilization for web tier"
+      + alarm_name                            = "three-tier-app-web-cpu-high"
+      + arn                                   = (known after apply)
+      + comparison_operator                   = "GreaterThanThreshold"
+      + dimensions                            = {
+          + "AutoScalingGroupName" = "three-tier-app-web-asg"
+        }
+      + evaluate_low_sample_count_percentiles = (known after apply)
+      + evaluation_periods                    = 2
+      + id                                    = (known after apply)
+      + metric_name                           = "CPUUtilization"
+      + namespace                             = "AWS/EC2"
+      + period                                = 300
+      + statistic                             = "Average"
+      + tags                                  = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-cpu-alarm"
+        }
+      + tags_all                              = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-cpu-alarm"
+        }
+      + threshold                             = 80
+      + treat_missing_data                    = "missing"
+    }
+
+  # aws_db_instance.main will be created
+  + resource "aws_db_instance" "main" {
+      + address                               = (known after apply)
+      + allocated_storage                     = 20
+      + apply_immediately                     = false
+      + arn                                   = (known after apply)
+      + auto_minor_version_upgrade            = true
+      + availability_zone                     = (known after apply)
+      + backup_retention_period               = 7
+      + backup_window                         = "03:00-04:00"
+      + ca_cert_identifier                    = (known after apply)
+      + character_set_name                    = (known after apply)
+      + copy_tags_to_snapshot                 = false
+      + db_name                               = "appdb"
+      + db_subnet_group_name                  = "three-tier-app-db-subnet-group"
+      + delete_automated_backups              = true
+      + endpoint                              = (known after apply)
+      + engine                                = "mysql"
+      + engine_version                        = "8.0"
+      + engine_version_actual                 = (known after apply)
+      + final_snapshot_identifier             = "three-tier-app-db-final-snapshot"
+      + hosted_zone_id                        = (known after apply)
+      + id                                    = (known after apply)
+      + identifier                            = "three-tier-app-db"
+      + identifier_prefix                     = (known after apply)
+      + instance_class                        = "db.t3.micro"
+      + iops                                  = (known after apply)
+      + kms_key_id                            = (known after apply)
+      + latest_restorable_time                = (known after apply)
+      + license_model                         = (known after apply)
+      + listener_endpoint                     = (known after apply)
+      + maintenance_window                    = "mon:04:00-mon:05:00"
+      + master_user_secret                    = (known after apply)
+      + master_user_secret_kms_key_id         = (known after apply)
+      + monitoring_interval                   = 0
+      + monitoring_role_arn                   = (known after apply)
+      + multi_az                              = true
+      + name                                  = (known after apply)
+      + nchar_character_set_name              = (known after apply)
+      + network_type                          = (known after apply)
+      + option_group_name                     = (known after apply)
+      + parameter_group_name                  = (known after apply)
+      + password                              = (sensitive value)
+      + performance_insights_enabled          = false
+      + performance_insights_kms_key_id       = (known after apply)
+      + performance_insights_retention_period = (known after apply)
+      + port                                  = (known after apply)
+      + publicly_accessible                   = false
+      + replica_mode                          = (known after apply)
+      + replicas                              = (known after apply)
+      + resource_id                           = (known after apply)
+      + skip_final_snapshot                   = false
+      + snapshot_identifier                   = (known after apply)
+      + status                                = (known after apply)
+      + storage_encrypted                     = true
+      + storage_throughput                    = (known after apply)
+      + storage_type                          = "gp3"
+      + tags                                  = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-db"
+        }
+      + tags_all                              = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-db"
+        }
+      + timezone                              = (known after apply)
+      + username                              = "admin"
+      + vpc_security_group_ids                = (known after apply)
+    }
+
+  # aws_db_subnet_group.main will be created
+  + resource "aws_db_subnet_group" "main" {
+      + arn                     = (known after apply)
+      + description             = "Managed by Terraform"
+      + id                      = (known after apply)
+      + name                    = "three-tier-app-db-subnet-group"
+      + name_prefix             = (known after apply)
+      + subnet_ids              = (known after apply)
+      + supported_network_types = (known after apply)
+      + tags                    = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-db-subnet-group"
+        }
+      + tags_all                = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-db-subnet-group"
+        }
+      + vpc_id                  = (known after apply)
+    }
+
+  # aws_eip.nat will be created
+  + resource "aws_eip" "nat" {
+      + allocation_id        = (known after apply)
+      + association_id       = (known after apply)
+      + carrier_ip           = (known after apply)
+      + customer_owned_ip    = (known after apply)
+      + domain               = (known after apply)
+      + id                   = (known after apply)
+      + instance             = (known after apply)
+      + network_border_group = (known after apply)
+      + network_interface    = (known after apply)
+      + private_dns          = (known after apply)
+      + private_ip           = (known after apply)
+      + public_dns           = (known after apply)
+      + public_ip            = (known after apply)
+      + public_ipv4_pool     = (known after apply)
+      + tags                 = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-nat-eip"
+        }
+      + tags_all             = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-nat-eip"
+        }
+      + vpc                  = true
+    }
+
+  # aws_iam_instance_profile.app_profile will be created
+  + resource "aws_iam_instance_profile" "app_profile" {
+      + arn         = (known after apply)
+      + create_date = (known after apply)
+      + id          = (known after apply)
+      + name        = "three-tier-app-app-profile"
+      + name_prefix = (known after apply)
+      + path        = "/"
+      + role        = "three-tier-app-app-role"
+      + tags        = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-profile"
+        }
+      + tags_all    = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-profile"
+        }
+      + unique_id   = (known after apply)
+    }
+
+  # aws_iam_role.app_role will be created
+  + resource "aws_iam_role" "app_role" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "ec2.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "three-tier-app-app-role"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + role_last_used        = (known after apply)
+      + tags                  = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-role"
+        }
+      + tags_all              = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-role"
+        }
+      + unique_id             = (known after apply)
+    }
+
+  # aws_iam_role_policy_attachment.app_policy["arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess"] will be created
+  + resource "aws_iam_role_policy_attachment" "app_policy" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonRDSReadOnlyAccess"
+      + role       = "three-tier-app-app-role"
+    }
+
+  # aws_iam_role_policy_attachment.app_policy["arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"] will be created
+  + resource "aws_iam_role_policy_attachment" "app_policy" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      + role       = "three-tier-app-app-role"
+    }
+
+  # aws_iam_role_policy_attachment.app_policy["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"] will be created
+  + resource "aws_iam_role_policy_attachment" "app_policy" {
+      + id         = (known after apply)
+      + policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+      + role       = "three-tier-app-app-role"
+    }
+
+  # aws_internet_gateway.main will be created
+  + resource "aws_internet_gateway" "main" {
+      + arn      = (known after apply)
+      + id       = (known after apply)
+      + owner_id = (known after apply)
+      + tags     = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-igw"
+        }
+      + tags_all = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-igw"
+        }
+      + vpc_id   = (known after apply)
+    }
+
+  # aws_launch_template.app will be created
+  + resource "aws_launch_template" "app" {
+      + arn             = (known after apply)
+      + default_version = (known after apply)
+      + id              = (known after apply)
+      + image_id        = "ami-0df7a207adb9748c7"
+      + instance_type   = "t3.small"
+      + latest_version  = (known after apply)
+      + name            = (known after apply)
+      + name_prefix     = "three-tier-app-app-"
+      + tags_all        = (known after apply)
+      + user_data       = "IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBqYXZhLTExLWFtYXpvbi1jb3JyZXR0bwojIEluc3RhbGwgQ2xvdWRXYXRjaCBhZ2VudAp5dW0gaW5zdGFsbCAteSBhbWF6b24tY2xvdWR3YXRjaC1hZ2VudAovb3B0L2F3cy9hbWF6b24tY2xvdWR3YXRjaC1hZ2VudC9iaW4vYW1hem9uLWNsb3Vkd2F0Y2gtYWdlbnQtY3RsIC1hIGZldGNoLWNvbmZpZyAtbSBlYzIgLXMgLWMgc3NtOkFtYXpvbkNsb3VkV2F0Y2gtQ29uZmlnCg=="
+
+      + iam_instance_profile {
+          + name = "three-tier-app-app-profile"
+        }
+
+      + monitoring {
+          + enabled = true
+        }
+
+      + network_interfaces {
+          + security_groups = (known after apply)
+        }
+
+      + tag_specifications {
+          + resource_type = "instance"
+          + tags          = {
+              + "Environment" = "prod"
+              + "Name"        = "three-tier-app-app"
+              + "Tier"        = "app"
+            }
+        }
+    }
+
+  # aws_launch_template.web will be created
+  + resource "aws_launch_template" "web" {
+      + arn             = (known after apply)
+      + default_version = (known after apply)
+      + id              = (known after apply)
+      + image_id        = "ami-0df7a207adb9748c7"
+      + instance_type   = "t3.micro"
+      + latest_version  = (known after apply)
+      + name            = (known after apply)
+      + name_prefix     = "three-tier-app-web-"
+      + tags_all        = (known after apply)
+      + user_data       = "IyEvYmluL2Jhc2gKeXVtIHVwZGF0ZSAteQp5dW0gaW5zdGFsbCAteSBodHRwZApzeXN0ZW1jdGwgc3RhcnQgaHR0cGQKc3lzdGVtY3RsIGVuYWJsZSBodHRwZAojIEluc3RhbGwgQ2xvdWRXYXRjaCBhZ2VudAp5dW0gaW5zdGFsbCAteSBhbWF6b24tY2xvdWR3YXRjaC1hZ2VudAovb3B0L2F3cy9hbWF6b24tY2xvdWR3YXRjaC1hZ2VudC9iaW4vYW1hem9uLWNsb3Vkd2F0Y2gtYWdlbnQtY3RsIC1hIGZldGNoLWNvbmZpZyAtbSBlYzIgLXMgLWMgc3NtOkFtYXpvbkNsb3VkV2F0Y2gtQ29uZmlnCg=="
+
+      + monitoring {
+          + enabled = true
+        }
+
+      + network_interfaces {
+          + associate_public_ip_address = "true"
+          + security_groups             = (known after apply)
+        }
+
+      + tag_specifications {
+          + resource_type = "instance"
+          + tags          = {
+              + "Environment" = "prod"
+              + "Name"        = "three-tier-app-web"
+              + "Tier"        = "web"
+            }
+        }
+    }
+
+  # aws_lb.app will be created
+  + resource "aws_lb" "app" {
+      + arn                                         = (known after apply)
+      + arn_suffix                                  = (known after apply)
+      + desync_mitigation_mode                      = "defensive"
+      + dns_name                                    = (known after apply)
+      + drop_invalid_header_fields                  = false
+      + enable_deletion_protection                  = true
+      + enable_http2                                = true
+      + enable_tls_version_and_cipher_suite_headers = false
+      + enable_waf_fail_open                        = false
+      + enable_xff_client_port                      = false
+      + id                                          = (known after apply)
+      + idle_timeout                                = 60
+      + internal                                    = true
+      + ip_address_type                             = (known after apply)
+      + load_balancer_type                          = "application"
+      + name                                        = "three-tier-app-app-alb"
+      + preserve_host_header                        = false
+      + security_groups                             = (known after apply)
+      + subnets                                     = (known after apply)
+      + tags                                        = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-alb"
+        }
+      + tags_all                                    = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-alb"
+        }
+      + vpc_id                                      = (known after apply)
+      + xff_header_processing_mode                  = "append"
+      + zone_id                                     = (known after apply)
+    }
+
+  # aws_lb.web will be created
+  + resource "aws_lb" "web" {
+      + arn                                         = (known after apply)
+      + arn_suffix                                  = (known after apply)
+      + desync_mitigation_mode                      = "defensive"
+      + dns_name                                    = (known after apply)
+      + drop_invalid_header_fields                  = false
+      + enable_deletion_protection                  = true
+      + enable_http2                                = true
+      + enable_tls_version_and_cipher_suite_headers = false
+      + enable_waf_fail_open                        = false
+      + enable_xff_client_port                      = false
+      + id                                          = (known after apply)
+      + idle_timeout                                = 60
+      + internal                                    = false
+      + ip_address_type                             = (known after apply)
+      + load_balancer_type                          = "application"
+      + name                                        = "three-tier-app-web-alb"
+      + preserve_host_header                        = false
+      + security_groups                             = (known after apply)
+      + subnets                                     = (known after apply)
+      + tags                                        = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-alb"
+        }
+      + tags_all                                    = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-alb"
+        }
+      + vpc_id                                      = (known after apply)
+      + xff_header_processing_mode                  = "append"
+      + zone_id                                     = (known after apply)
+    }
+
+  # aws_lb_listener.app_http will be created
+  + resource "aws_lb_listener" "app_http" {
+      + arn               = (known after apply)
+      + id                = (known after apply)
+      + load_balancer_arn = (known after apply)
+      + port              = 8080
+      + protocol          = "HTTP"
+      + ssl_policy        = (known after apply)
+      + tags_all          = (known after apply)
+
+      + default_action {
+          + order            = (known after apply)
+          + target_group_arn = (known after apply)
+          + type             = "forward"
+        }
+    }
+
+  # aws_lb_listener.web_http will be created
+  + resource "aws_lb_listener" "web_http" {
+      + arn               = (known after apply)
+      + id                = (known after apply)
+      + load_balancer_arn = (known after apply)
+      + port              = 80
+      + protocol          = "HTTP"
+      + ssl_policy        = (known after apply)
+      + tags_all          = (known after apply)
+
+      + default_action {
+          + order            = (known after apply)
+          + target_group_arn = (known after apply)
+          + type             = "forward"
+        }
+    }
+
+  # aws_lb_target_group.app will be created
+  + resource "aws_lb_target_group" "app" {
+      + arn                                = (known after apply)
+      + arn_suffix                         = (known after apply)
+      + connection_termination             = false
+      + deregistration_delay               = "300"
+      + id                                 = (known after apply)
+      + ip_address_type                    = (known after apply)
+      + lambda_multi_value_headers_enabled = false
+      + load_balancing_algorithm_type      = (known after apply)
+      + load_balancing_cross_zone_enabled  = (known after apply)
+      + name                               = "three-tier-app-app-tg"
+      + port                               = 8080
+      + preserve_client_ip                 = (known after apply)
+      + protocol                           = "HTTP"
+      + protocol_version                   = (known after apply)
+      + proxy_protocol_v2                  = false
+      + slow_start                         = 0
+      + tags                               = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-tg"
+        }
+      + tags_all                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-tg"
+        }
+      + target_type                        = "instance"
+      + vpc_id                             = (known after apply)
+
+      + health_check {
+          + enabled             = true
+          + healthy_threshold   = 3
+          + interval            = 30
+          + matcher             = "200"
+          + path                = "/health"
+          + port                = "traffic-port"
+          + protocol            = "HTTP"
+          + timeout             = 5
+          + unhealthy_threshold = 2
+        }
+    }
+
+  # aws_lb_target_group.web will be created
+  + resource "aws_lb_target_group" "web" {
+      + arn                                = (known after apply)
+      + arn_suffix                         = (known after apply)
+      + connection_termination             = false
+      + deregistration_delay               = "300"
+      + id                                 = (known after apply)
+      + ip_address_type                    = (known after apply)
+      + lambda_multi_value_headers_enabled = false
+      + load_balancing_algorithm_type      = (known after apply)
+      + load_balancing_cross_zone_enabled  = (known after apply)
+      + name                               = "three-tier-app-web-tg"
+      + port                               = 80
+      + preserve_client_ip                 = (known after apply)
+      + protocol                           = "HTTP"
+      + protocol_version                   = (known after apply)
+      + proxy_protocol_v2                  = false
+      + slow_start                         = 0
+      + tags                               = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-tg"
+        }
+      + tags_all                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-tg"
+        }
+      + target_type                        = "instance"
+      + vpc_id                             = (known after apply)
+
+      + health_check {
+          + enabled             = true
+          + healthy_threshold   = 3
+          + interval            = 30
+          + matcher             = "200"
+          + path                = "/"
+          + port                = "traffic-port"
+          + protocol            = "HTTP"
+          + timeout             = 5
+          + unhealthy_threshold = 2
+        }
+    }
+
+  # aws_nat_gateway.main will be created
+  + resource "aws_nat_gateway" "main" {
+      + allocation_id        = (known after apply)
+      + association_id       = (known after apply)
+      + connectivity_type    = "public"
+      + id                   = (known after apply)
+      + network_interface_id = (known after apply)
+      + private_ip           = (known after apply)
+      + public_ip            = (known after apply)
+      + subnet_id            = (known after apply)
+      + tags                 = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-nat"
+        }
+      + tags_all             = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-nat"
+        }
+    }
+
+  # aws_network_acl.public will be created
+  + resource "aws_network_acl" "public" {
+      + arn        = (known after apply)
+      + egress     = [
+          + {
+              + action          = "allow"
+              + cidr_block      = "0.0.0.0/0"
+              + from_port       = 1024
+              + ipv6_cidr_block = ""
+              + protocol        = "tcp"
+              + rule_no         = 120
+              + to_port         = 65535
+            },
+          + {
+              + action          = "allow"
+              + cidr_block      = "0.0.0.0/0"
+              + from_port       = 443
+              + ipv6_cidr_block = ""
+              + protocol        = "tcp"
+              + rule_no         = 110
+              + to_port         = 443
+            },
+          + {
+              + action          = "allow"
+              + cidr_block      = "0.0.0.0/0"
+              + from_port       = 80
+              + ipv6_cidr_block = ""
+              + protocol        = "tcp"
+              + rule_no         = 100
+              + to_port         = 80
+            },
+        ]
+      + id         = (known after apply)
+      + ingress    = [
+          + {
+              + action          = "allow"
+              + cidr_block      = "0.0.0.0/0"
+              + from_port       = 1024
+              + ipv6_cidr_block = ""
+              + protocol        = "tcp"
+              + rule_no         = 120
+              + to_port         = 65535
+            },
+          + {
+              + action          = "allow"
+              + cidr_block      = "0.0.0.0/0"
+              + from_port       = 443
+              + ipv6_cidr_block = ""
+              + protocol        = "tcp"
+              + rule_no         = 110
+              + to_port         = 443
+            },
+          + {
+              + action          = "allow"
+              + cidr_block      = "0.0.0.0/0"
+              + from_port       = 80
+              + ipv6_cidr_block = ""
+              + protocol        = "tcp"
+              + rule_no         = 100
+              + to_port         = 80
+            },
+        ]
+      + owner_id   = (known after apply)
+      + subnet_ids = (known after apply)
+      + tags       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-nacl"
+        }
+      + tags_all   = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-nacl"
+        }
+      + vpc_id     = (known after apply)
+    }
+
+  # aws_route53_record.app will be created
+  + resource "aws_route53_record" "app" {
+      + allow_overwrite = (known after apply)
+      + fqdn            = (known after apply)
+      + id              = (known after apply)
+      + name            = "app.internal.three-tier-app.com"
+      + type            = "A"
+      + zone_id         = (known after apply)
+
+      + alias {
+          + evaluate_target_health = true
+          + name                   = (known after apply)
+          + zone_id                = (known after apply)
+        }
+    }
+
+  # aws_route53_record.db will be created
+  + resource "aws_route53_record" "db" {
+      + allow_overwrite = (known after apply)
+      + fqdn            = (known after apply)
+      + id              = (known after apply)
+      + name            = "db.internal.three-tier-app.com"
+      + records         = (known after apply)
+      + ttl             = 300
+      + type            = "CNAME"
+      + zone_id         = (known after apply)
+    }
+
+  # aws_route53_zone.private will be created
+  + resource "aws_route53_zone" "private" {
+      + arn                 = (known after apply)
+      + comment             = "Managed by Terraform"
+      + force_destroy       = false
+      + id                  = (known after apply)
+      + name                = "internal.three-tier-app.com"
+      + name_servers        = (known after apply)
+      + primary_name_server = (known after apply)
+      + tags                = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-zone"
+        }
+      + tags_all            = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-zone"
+        }
+      + zone_id             = (known after apply)
+
+      + vpc {
+          + vpc_id     = (known after apply)
+          + vpc_region = (known after apply)
+        }
+    }
+
+  # aws_route_table.private will be created
+  + resource "aws_route_table" "private" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + route            = [
+          + {
+              + carrier_gateway_id         = ""
+              + cidr_block                 = "0.0.0.0/0"
+              + core_network_arn           = ""
+              + destination_prefix_list_id = ""
+              + egress_only_gateway_id     = ""
+              + gateway_id                 = ""
+              + instance_id                = ""
+              + ipv6_cidr_block            = ""
+              + local_gateway_id           = ""
+              + nat_gateway_id             = (known after apply)
+              + network_interface_id       = ""
+              + transit_gateway_id         = ""
+              + vpc_endpoint_id            = ""
+              + vpc_peering_connection_id  = ""
+            },
+        ]
+      + tags             = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-rt"
+        }
+      + tags_all         = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-rt"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table.public will be created
+  + resource "aws_route_table" "public" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + route            = [
+          + {
+              + carrier_gateway_id         = ""
+              + cidr_block                 = "0.0.0.0/0"
+              + core_network_arn           = ""
+              + destination_prefix_list_id = ""
+              + egress_only_gateway_id     = ""
+              + gateway_id                 = (known after apply)
+              + instance_id                = ""
+              + ipv6_cidr_block            = ""
+              + local_gateway_id           = ""
+              + nat_gateway_id             = ""
+              + network_interface_id       = ""
+              + transit_gateway_id         = ""
+              + vpc_endpoint_id            = ""
+              + vpc_peering_connection_id  = ""
+            },
+        ]
+      + tags             = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-rt"
+        }
+      + tags_all         = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-rt"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table_association.private_app[0] will be created
+  + resource "aws_route_table_association" "private_app" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.private_app[1] will be created
+  + resource "aws_route_table_association" "private_app" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.private_db[0] will be created
+  + resource "aws_route_table_association" "private_db" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.private_db[1] will be created
+  + resource "aws_route_table_association" "private_db" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.public[0] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.public[1] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_security_group.app will be created
+  + resource "aws_security_group" "app" {
+      + arn                    = (known after apply)
+      + description            = "Security group for application tier"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = "Allow HTTPS outbound for updates"
+              + from_port        = 443
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 443
+            },
+          + {
+              + cidr_blocks      = [
+                  + "10.16.20.0/24",
+                  + "10.16.21.0/24",
+                ]
+              + description      = "Allow outbound to database tier"
+              + from_port        = 3306
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 3306
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "10.16.0.0/24",
+                  + "10.16.1.0/24",
+                ]
+              + description      = "Allow inbound from web tier"
+              + from_port        = 8080
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8080
+            },
+        ]
+      + name                   = "three-tier-app-app-sg"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-sg"
+        }
+      + tags_all               = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-app-sg"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group.db will be created
+  + resource "aws_security_group" "db" {
+      + arn                    = (known after apply)
+      + description            = "Security group for database tier"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "10.16.10.0/23",
+                  + "10.16.12.0/23",
+                ]
+              + description      = "Allow outbound only to application tier"
+              + from_port        = 0
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "-1"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 0
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "10.16.10.0/23",
+                  + "10.16.12.0/23",
+                ]
+              + description      = "Allow inbound from application tier"
+              + from_port        = 3306
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 3306
+            },
+        ]
+      + name                   = "three-tier-app-db-sg"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-db-sg"
+        }
+      + tags_all               = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-db-sg"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group.web will be created
+  + resource "aws_security_group" "web" {
+      + arn                    = (known after apply)
+      + description            = "Security group for web tier"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = "Allow HTTPS outbound for updates"
+              + from_port        = 443
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 443
+            },
+          + {
+              + cidr_blocks      = [
+                  + "10.16.10.0/23",
+                  + "10.16.12.0/23",
+                ]
+              + description      = "Allow outbound to application tier"
+              + from_port        = 8080
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 8080
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = "Allow HTTP inbound"
+              + from_port        = 80
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 80
+            },
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = "Allow HTTPS inbound"
+              + from_port        = 443
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 443
+            },
+        ]
+      + name                   = "three-tier-app-web-sg"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + revoke_rules_on_delete = false
+      + tags                   = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-sg"
+        }
+      + tags_all               = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-web-sg"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_sns_topic.alerts will be created
+  + resource "aws_sns_topic" "alerts" {
+      + arn                         = (known after apply)
+      + content_based_deduplication = false
+      + fifo_topic                  = false
+      + id                          = (known after apply)
+      + name                        = "three-tier-app-alerts"
+      + name_prefix                 = (known after apply)
+      + owner                       = (known after apply)
+      + policy                      = (known after apply)
+      + signature_version           = (known after apply)
+      + tags                        = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-alerts"
+        }
+      + tags_all                    = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-alerts"
+        }
+      + tracing_config              = (known after apply)
+    }
+
+  # aws_subnet.private_app[0] will be created
+  + resource "aws_subnet" "private_app" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-southeast-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.16.10.0/23"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + tags                                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-app-1"
+          + "Tier"        = "app"
+        }
+      + tags_all                                       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-app-1"
+          + "Tier"        = "app"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.private_app[1] will be created
+  + resource "aws_subnet" "private_app" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-southeast-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.16.12.0/23"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + tags                                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-app-2"
+          + "Tier"        = "app"
+        }
+      + tags_all                                       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-app-2"
+          + "Tier"        = "app"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.private_db[0] will be created
+  + resource "aws_subnet" "private_db" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-southeast-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.16.20.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + tags                                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-db-1"
+          + "Tier"        = "db"
+        }
+      + tags_all                                       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-db-1"
+          + "Tier"        = "db"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.private_db[1] will be created
+  + resource "aws_subnet" "private_db" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-southeast-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.16.21.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + tags                                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-db-2"
+          + "Tier"        = "db"
+        }
+      + tags_all                                       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-private-db-2"
+          + "Tier"        = "db"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.public[0] will be created
+  + resource "aws_subnet" "public" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-southeast-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.16.0.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = true
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + tags                                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-1"
+          + "Tier"        = "web"
+        }
+      + tags_all                                       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-1"
+          + "Tier"        = "web"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.public[1] will be created
+  + resource "aws_subnet" "public" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "ap-southeast-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.16.1.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = true
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + tags                                           = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-2"
+          + "Tier"        = "web"
+        }
+      + tags_all                                       = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-public-2"
+          + "Tier"        = "web"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_vpc.main will be created
+  + resource "aws_vpc" "main" {
+      + arn                                  = (known after apply)
+      + cidr_block                           = "10.16.0.0/16"
+      + default_network_acl_id               = (known after apply)
+      + default_route_table_id               = (known after apply)
+      + default_security_group_id            = (known after apply)
+      + dhcp_options_id                      = (known after apply)
+      + enable_classiclink                   = (known after apply)
+      + enable_classiclink_dns_support       = (known after apply)
+      + enable_dns_hostnames                 = true
+      + enable_dns_support                   = true
+      + enable_network_address_usage_metrics = (known after apply)
+      + id                                   = (known after apply)
+      + instance_tenancy                     = "default"
+      + ipv6_association_id                  = (known after apply)
+      + ipv6_cidr_block                      = (known after apply)
+      + ipv6_cidr_block_network_border_group = (known after apply)
+      + main_route_table_id                  = (known after apply)
+      + owner_id                             = (known after apply)
+      + tags                                 = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-vpc"
+        }
+      + tags_all                             = {
+          + "Environment" = "prod"
+          + "Name"        = "three-tier-app-vpc"
+        }
+    }
+
+Plan: 45 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + app_internal_dns = "app.internal.three-tier-app.com"
+  + db_endpoint      = (known after apply)
+  + private_zone_id  = (known after apply)
+  + vpc_id           = (known after apply)
+  + web_alb_dns      = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
